@@ -29,6 +29,14 @@ export const changePasswordSchema = z.object({
         .min(1, "New password is required")
         .regex(PASSWORD_POLICY_REGEX, PASSWORD_POLICY_MESSAGE),
 });
+export const updateProfileSchema = z.object({
+    fullName: z.string().trim().min(1, "Full name is required"),
+    avatarUrl: z.union([
+        z.string().trim().url("Avatar URL must be a valid URL"),
+        z.literal(""),
+        z.null(),
+    ]).optional(),
+});
 const lessonSchema = z.object({
     title: z.string().optional(),
     videoUrl: z.string().optional().nullable(),

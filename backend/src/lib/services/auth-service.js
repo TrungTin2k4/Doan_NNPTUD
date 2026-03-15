@@ -136,6 +136,18 @@ export async function getCurrentUserProfile(userId) {
         avatarUrl: (_a = userObj.avatarUrl) !== null && _a !== void 0 ? _a : null,
     };
 }
+export async function updateCurrentUserProfile(userId, input) {
+    var _a;
+    await connectToDatabase();
+    const user = await UserModel.findById(userId).exec();
+    if (!user) {
+        throw new NotFoundError("User not found");
+    }
+    user.fullName = input.fullName.trim();
+    user.avatarUrl = ((_a = input.avatarUrl) === null || _a === void 0 ? void 0 : _a.trim()) ? input.avatarUrl.trim() : null;
+    await user.save();
+    return getCurrentUserProfile(userId);
+}
 export async function requestPasswordReset(input) {
     await connectToDatabase();
     await cleanupExpiredResetTokens();
