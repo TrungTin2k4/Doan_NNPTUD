@@ -136,10 +136,18 @@ function HomePage() {
                 <span>{activeCourse?.category || 'Popular pick'}</span>
               </div>
               <div className="home-hero-tag home-hero-tag-right">
-                <Icon name="star" className="h-4 w-4" />
                 <span>{featuredCourses.length > 0 ? `${activeIndex + 1} / ${featuredCourses.length}` : 'Top course'}</span>
               </div>
-              <div className={`home-hero-orb home-hero-orb-${activeCard?.tone || 'brand'}`} />
+              {activeCard?.thumbnail ? (
+                <div
+                  className="home-hero-photo"
+                  style={{
+                    backgroundImage: `linear-gradient(180deg, rgba(19, 24, 39, 0.08), rgba(19, 24, 39, 0.22)), url(${activeCard.thumbnail})`,
+                  }}
+                />
+              ) : (
+                <div className={`home-hero-orb home-hero-orb-${activeCard?.tone || 'brand'}`} />
+              )}
               <div className="home-hero-course-card">
                 <p className="type-label text-brand-600">Featured now</p>
                 <h2 className="type-title-lg text-ink-950">{activeCourse?.title || 'Practical course spotlight'}</h2>

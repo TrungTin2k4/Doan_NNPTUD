@@ -36,7 +36,7 @@ function Navbar() {
     <header className="topbar-shell">
       <div className="flex flex-wrap items-center gap-4 lg:flex-nowrap lg:gap-6">
         <Link className="brand-mark no-underline" to="/">
-          <span className="brand-mark-dot" />
+          <img alt="EduLearn logo" className="brand-mark-logo" src="/edulearn-logo.svg" />
           <span className="type-title-lg text-ink-950">EduLearn</span>
         </Link>
 

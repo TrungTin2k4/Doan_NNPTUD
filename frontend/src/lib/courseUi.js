@@ -16,6 +16,7 @@ export function buildCourseCardModel(course, options = {}) {
     level: course.level || 'All level',
     title: course.title,
     summary,
+    thumbnail: course.thumbnail || null,
     stats:
       options.stats ||
       [course.duration ? `${course.duration} min` : null, course.category || null]

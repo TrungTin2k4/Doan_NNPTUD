@@ -15,30 +15,43 @@ function CourseCard({ course }) {
   const isAdmin = user?.role === 'ADMIN'
   const detailHref = isAdmin && course.id ? `/admin/courses?edit=${course.id}` : course.slug ? `/courses/${course.slug}` : null
   const detailLabel = isAdmin ? 'Edit course' : 'View details'
+  const shouldShowMore = (course.title?.length ?? 0) > 42 || (course.summary?.length ?? 0) > 120
+  const thumbStyle = course.thumbnail
+    ? {
+        backgroundImage: `linear-gradient(180deg, rgba(16, 22, 39, 0.04), rgba(16, 22, 39, 0.28)), url(${course.thumbnail})`,
+      }
+    : undefined
 
   return (
     <article className="course-card course-card-lg">
-      <div className={`course-thumb ${toneClass}`}>
+      <div className={`course-thumb ${toneClass} ${course.thumbnail ? 'course-thumb-image' : ''}`} style={thumbStyle}>
         <div className="thumb-chip">
           <Icon name={iconName} className="h-4 w-4" />
           <span>{course.level}</span>
         </div>
       </div>
-      <div className="space-y-3">
+      <div className="course-card-body">
         {course.stats ? <p className="type-caption text-brand-600">{course.stats}</p> : null}
-        <h3 className="type-title-lg text-ink-950">{course.title}</h3>
-        <p className="type-body-md text-ink-700">{course.summary}</p>
-        <div className="flex items-center justify-between gap-3 pt-1">
-          <span className="pill-neutral">{course.tag}</span>
-          {course.price ? <span className="type-title-sm text-ink-950">{course.price}</span> : null}
-        </div>
-        {detailHref ? (
-          <div className="pt-2">
-            <Link className="text-link" to={detailHref}>
-              {detailLabel}
-            </Link>
+        <h3 className="type-title-lg text-ink-950 course-title-clamp">{course.title}</h3>
+        <p className="type-body-md text-ink-700 course-summary-clamp">{course.summary}</p>
+        <div className="course-card-footer">
+          <div className="flex items-center justify-between gap-3 pt-1">
+            <span className="pill-neutral">{course.tag}</span>
+            {course.price ? <span className="type-title-sm text-ink-950">{course.price}</span> : null}
           </div>
-        ) : null}
+          <div className="course-card-link-row">
+            {detailHref ? (
+              <Link className="text-link" to={detailHref}>
+                {detailLabel}
+              </Link>
+            ) : null}
+            {shouldShowMore && detailHref ? (
+              <Link className="course-more-link" to={detailHref}>
+                See more
+              </Link>
+            ) : null}
+          </div>
+        </div>
       </div>
     </article>
   )
