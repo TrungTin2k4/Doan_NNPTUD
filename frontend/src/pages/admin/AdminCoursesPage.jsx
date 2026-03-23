@@ -7,12 +7,15 @@ import {
   getAdminCoursesRequest,
   updateAdminCourseRequest,
 } from '../../api/admin'
+import { getAdminCategoriesRequest } from '../../api/categories'
+import { uploadMediaRequest } from '../../api/upload'
 import FeedbackMessage from '../../components/common/FeedbackMessage.jsx'
 import FormField from '../../components/common/FormField.jsx'
 import PageHero from '../../components/common/PageHero.jsx'
 import SelectField from '../../components/common/SelectField.jsx'
 import StatusBadge from '../../components/common/StatusBadge.jsx'
 import TextareaField from '../../components/common/TextareaField.jsx'
+import UploadField from '../../components/common/UploadField.jsx'
 import { formatPrice } from '../../lib/courseUi'
 
 function toPayload(values) {
@@ -36,6 +39,8 @@ function AdminCoursesPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [search, setSearch] = useState('')
   const [editingCourse, setEditingCourse] = useState(null)
+  const [categoryOptions, setCategoryOptions] = useState([])
+  const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -100,6 +105,19 @@ function AdminCoursesPage() {
     syncCourses()
   }, [loadCourses])
 
+  useEffect(() => {
+    async function loadCategoryOptions() {
+      try {
+        const data = await getAdminCategoriesRequest({ page: 0, size: 100, isActive: 'true' })
+        setCategoryOptions((data?.categories ?? []).map((item) => item.name))
+      } catch {
+        setCategoryOptions([])
+      }
+    }
+
+    loadCategoryOptions()
+  }, [])
+
   function startEdit(course) {
     applyCourseToForm(course)
     const nextParams = new URLSearchParams(searchParams)
@@ -158,6 +176,26 @@ function AdminCoursesPage() {
     }
   }
 
+  async function handleThumbnailUpload(event) {
+    const file = event.target.files?.[0]
+    if (!file) {
+      return
+    }
+
+    setUploading(true)
+    setErrorMessage('')
+    try {
+      const media = await uploadMediaRequest({ file, purpose: 'COURSE_THUMBNAIL' })
+      form.setValue('thumbnail', media.publicUrl, { shouldDirty: true })
+      setMessage('Thumbnail uploaded successfully.')
+    } catch (error) {
+      setErrorMessage(error.message)
+    } finally {
+      setUploading(false)
+      event.target.value = ''
+    }
+  }
+
   return (
     <>
       <PageHero
@@ -196,7 +234,8 @@ function AdminCoursesPage() {
               <FormField id="course-title" label="Title" placeholder="React basics" registration={form.register('title', { required: 'Title is required' })} error={form.formState.errors.title?.message} className="auth-grid-span-2" />
               <TextareaField id="course-description" label="Description" placeholder="Short course description" registration={form.register('description')} className="auth-grid-span-2" />
               <FormField id="course-thumbnail" label="Thumbnail URL" placeholder="https://..." registration={form.register('thumbnail')} error={form.formState.errors.thumbnail?.message} className="auth-grid-span-2" />
-              <FormField id="course-category" label="Category" placeholder="UI Design" registration={form.register('category')} />
+              <UploadField id="course-thumbnail-upload" label="Upload thumbnail" helper="PNG, JPG, WEBP, or GIF" onChange={handleThumbnailUpload} uploading={uploading} />
+              <SelectField id="course-category" label="Category" registration={form.register('category')} options={[{ value: '', label: 'Select category' }, ...categoryOptions.map((item) => ({ value: item, label: item }))]} />
               <FormField id="course-instructor" label="Instructor" placeholder="Jane Doe" registration={form.register('instructor')} />
               <SelectField id="course-level" label="Level" registration={form.register('level')} options={[{ value: 'beginner', label: 'Beginner' }, { value: 'intermediate', label: 'Intermediate' }, { value: 'advanced', label: 'Advanced' }]} />
               <SelectField id="course-status" label="Status" registration={form.register('status')} options={[{ value: 'DRAFT', label: 'Draft' }, { value: 'PUBLISHED', label: 'Published' }]} />

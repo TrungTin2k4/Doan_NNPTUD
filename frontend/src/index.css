@@ -8,24 +8,24 @@
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
 
-  --color-canvas: #f4efe6;
-  --color-surface: #fbf8f2;
-  --color-elevated: #fffdf9;
-  --color-ink-950: #1b2234;
-  --color-ink-700: #4c5875;
-  --color-ink-600: #63708f;
-  --color-ink-500: #7f8aa5;
-  --color-line: #d9cfbf;
-  --color-brand-600: #945d1a;
-  --color-brand-500: #ba7a2a;
-  --color-brand-100: #f1dcc2;
-  --color-accent-700: #245f57;
-  --color-accent-600: #2b6e67;
-  --color-accent-500: #2f7d72;
-  --color-accent-100: #dceee6;
+  --color-canvas: #f7f8fc;
+  --color-surface: #ffffff;
+  --color-elevated: #ffffff;
+  --color-ink-950: #171738;
+  --color-ink-700: #55557b;
+  --color-ink-600: #6d6d95;
+  --color-ink-500: #8d8db2;
+  --color-line: #dfdff0;
+  --color-brand-600: #5630d3;
+  --color-brand-500: #6d43f8;
+  --color-brand-100: #efeaff;
+  --color-accent-700: #14627b;
+  --color-accent-600: #1a86a5;
+  --color-accent-500: #22a9ca;
+  --color-accent-100: #e9f8ff;
 
-  --shadow-soft: 0 20px 45px rgba(27, 34, 52, 0.08);
-  --shadow-card: 0 16px 30px rgba(27, 34, 52, 0.06);
+  --shadow-soft: 0 26px 70px rgba(33, 29, 79, 0.08);
+  --shadow-card: 0 16px 42px rgba(33, 29, 79, 0.07);
   --radius-xl: 1.75rem;
   --radius-lg: 1.25rem;
   --radius-md: 1rem;
@@ -207,7 +207,7 @@
   .hero-shell {
     @apply relative rounded-[2rem] border px-6 py-8 shadow-none sm:px-8 sm:py-10 lg:px-12 lg:py-14;
     border-color: var(--color-line);
-    background-color: var(--color-surface);
+    background-color: #f0f2f8;
     background-image:
       radial-gradient(circle at top right, rgba(186, 122, 42, 0.18), transparent 28%),
       radial-gradient(circle at left 20%, rgba(47, 125, 114, 0.14), transparent 24%),
@@ -224,12 +224,12 @@
 
   .promo-strip {
     @apply flex min-h-12 items-center justify-center border-b px-4 py-3 text-center;
-    border-color: var(--color-line);
-    background: linear-gradient(90deg, rgba(220, 238, 230, 0.92), rgba(241, 220, 194, 0.85));
+    border-color: rgba(109, 67, 248, 0.16);
+    background: linear-gradient(90deg, #572be4, #6d43f8);
   }
 
   .topbar-shell {
-    @apply sticky top-0 z-20 rounded-[1.5rem] border bg-[rgba(251,248,242,0.88)] px-4 py-4 backdrop-blur sm:px-5;
+    @apply sticky top-0 z-20 rounded-[1.5rem] border bg-white px-4 py-4 backdrop-blur sm:px-5;
     border-color: var(--color-line);
     box-shadow: var(--shadow-card);
   }
@@ -706,6 +706,23 @@
     box-shadow: var(--shadow-card);
   }
 
+  .page-hero-shell {
+    @apply rounded-[2rem] border px-6 py-7 sm:px-8 sm:py-9 lg:px-10 lg:py-10;
+    border-color: var(--color-line);
+    background: linear-gradient(180deg, #f3f4fb, #ffffff);
+    box-shadow: var(--shadow-card);
+  }
+
+  .page-hero-grid {
+    @apply grid gap-8 xl:grid-cols-[1.08fr_0.92fr] xl:items-center;
+  }
+
+  .filter-shell {
+    @apply rounded-[1.5rem] border bg-white p-4 sm:p-5;
+    border-color: var(--color-line);
+    box-shadow: var(--shadow-card);
+  }
+
   .surface-card {
     @apply rounded-[var(--radius-lg)] border p-5;
     border-color: var(--color-line);
@@ -764,13 +781,13 @@
 
   .btn-secondary {
     @apply inline-flex items-center justify-center rounded-full border px-5 py-3 text-sm font-semibold transition duration-200 ease-out;
-    border-color: rgba(47, 125, 114, 0.2);
-    background-color: rgba(220, 238, 230, 0.9);
-    color: var(--color-accent-700);
+    border-color: rgba(109, 67, 248, 0.18);
+    background-color: rgba(239, 234, 255, 0.92);
+    color: var(--color-brand-600);
   }
 
   .btn-secondary:hover {
-    background-color: rgba(220, 238, 230, 1);
+    background-color: rgba(239, 234, 255, 1);
     transform: translateY(-1px);
   }
 
@@ -792,12 +809,12 @@
   }
 
   .pill-brand {
-    background-color: rgba(186, 122, 42, 0.14);
+    background-color: rgba(109, 67, 248, 0.12);
     color: var(--color-brand-600);
   }
 
   .pill-accent {
-    background-color: rgba(47, 125, 114, 0.14);
+    background-color: rgba(34, 169, 202, 0.14);
     color: var(--color-accent-700);
   }
 
@@ -840,6 +857,21 @@
   .field-select:focus {
     border-color: rgba(186, 122, 42, 0.45);
     box-shadow: 0 0 0 4px rgba(186, 122, 42, 0.12);
+  }
+
+  .upload-field-shell {
+    @apply flex min-h-[56px] cursor-pointer items-center justify-between gap-3 rounded-[1rem] border bg-white px-5 py-3;
+    border-color: var(--color-line);
+  }
+
+  .upload-field-copy {
+    @apply text-sm font-semibold;
+    color: var(--color-ink-950);
+  }
+
+  .upload-field-helper {
+    @apply text-xs;
+    color: var(--color-ink-500);
   }
 
   .field-input-error {
@@ -931,6 +963,50 @@
 
   .course-more-link:hover {
     color: var(--color-brand-500);
+  }
+
+  .course-instructor-line {
+    @apply text-sm;
+    color: var(--color-ink-500);
+  }
+
+  .course-rating-row {
+    @apply flex flex-wrap items-center gap-2 text-sm;
+  }
+
+  .course-rating-value {
+    color: #8c5700;
+    font-weight: 700;
+  }
+
+  .course-rating-star {
+    color: #f4a11a;
+  }
+
+  .course-rating-count {
+    color: var(--color-ink-500);
+  }
+
+  .course-instructor-line {
+    @apply text-sm;
+    color: var(--color-ink-500);
+  }
+
+  .course-rating-row {
+    @apply flex flex-wrap items-center gap-2 text-sm;
+  }
+
+  .course-rating-value {
+    color: #8c5700;
+    font-weight: 700;
+  }
+
+  .course-rating-star {
+    color: #f4a11a;
+  }
+
+  .course-rating-count {
+    color: var(--color-ink-500);
   }
 
   .stack-list {
@@ -1047,15 +1123,15 @@
   }
 
   .feedback-error {
-    border-color: rgba(209, 67, 67, 0.2);
-    background-color: rgba(255, 238, 238, 0.9);
+    border-color: rgba(255, 108, 108, 0.18);
+    background-color: rgba(255, 239, 239, 0.92);
     color: #9f2f2f;
   }
 
   .feedback-success {
-    border-color: rgba(47, 125, 114, 0.18);
-    background-color: rgba(232, 247, 242, 0.9);
-    color: var(--color-accent-700);
+    border-color: rgba(109, 67, 248, 0.16);
+    background-color: rgba(239, 234, 255, 0.9);
+    color: var(--color-brand-600);
   }
 
   .courses-hero {
@@ -1141,6 +1217,16 @@
   .detail-price {
     @apply text-3xl font-semibold;
     color: var(--color-ink-950);
+  }
+
+  .review-list-grid {
+    @apply grid gap-4;
+  }
+
+  .review-card {
+    @apply rounded-[1rem] border bg-white p-4;
+    border-color: var(--color-line);
+    box-shadow: var(--shadow-card);
   }
 
   .admin-course-action-box {

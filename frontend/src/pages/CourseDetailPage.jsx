@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getCourseDetailRequest } from '../api/courses'
+import { deleteReviewRequest, getCourseReviewsRequest, upsertReviewRequest } from '../api/reviews'
 import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
+import FormField from '../components/common/FormField.jsx'
 import PageHero from '../components/common/PageHero.jsx'
+import TextareaField from '../components/common/TextareaField.jsx'
 import { buildCourseCardModel, formatPrice } from '../lib/courseUi'
 import { useAuthStore } from '../store/authStore'
 import { useCartStore } from '../store/cartStore'
@@ -17,6 +21,18 @@ function CourseDetailPage() {
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
   const [notice, setNotice] = useState('')
+  const [reviewsData, setReviewsData] = useState({ reviews: [], totalItems: 0 })
+  const [reviewError, setReviewError] = useState('')
+
+  const reviewForm = useForm({
+    defaultValues: {
+      rating: '5',
+      comment: '',
+    },
+  })
+
+  const isAdmin = user?.role === 'ADMIN'
+  const myReview = reviewsData.reviews.find((item) => item.userId === user?.id)
 
   useEffect(() => {
     async function loadCourse() {
@@ -36,6 +52,35 @@ function CourseDetailPage() {
     loadCourse()
   }, [slug])
 
+  useEffect(() => {
+    async function loadReviews() {
+      if (!course?.id) {
+        return
+      }
+
+      try {
+        const data = await getCourseReviewsRequest(course.id, { page: 0, size: 20 })
+        setReviewsData({ reviews: data?.reviews ?? [], totalItems: data?.totalItems ?? 0 })
+      } catch (error) {
+        setReviewError(error.message)
+      }
+    }
+
+    loadReviews()
+  }, [course?.id])
+
+  useEffect(() => {
+    if (myReview) {
+      reviewForm.reset({
+        rating: String(myReview.rating),
+        comment: myReview.comment || '',
+      })
+      return
+    }
+
+    reviewForm.reset({ rating: '5', comment: '' })
+  }, [myReview, reviewForm])
+
   const cardModel = useMemo(() => {
     if (!course) {
       return null
@@ -47,8 +92,6 @@ function CourseDetailPage() {
       stats: `${course.duration || 0} min / ${course.sections?.length || 0} sections`,
     })
   }, [course])
-
-  const isAdmin = user?.role === 'ADMIN'
 
   function handleAddToCart() {
     if (!course) {
@@ -74,6 +117,44 @@ function CourseDetailPage() {
     }
 
     navigate('/checkout')
+  }
+
+  async function submitReview(values) {
+    if (!course?.id) {
+      return
+    }
+
+    setReviewError('')
+    setNotice('')
+    try {
+      await upsertReviewRequest({
+        courseId: course.id,
+        rating: Number(values.rating),
+        comment: values.comment || null,
+      })
+      const data = await getCourseReviewsRequest(course.id, { page: 0, size: 20 })
+      setReviewsData({ reviews: data?.reviews ?? [], totalItems: data?.totalItems ?? 0 })
+      setNotice('Review saved successfully.')
+    } catch (error) {
+      setReviewError(error.message)
+    }
+  }
+
+  async function handleDeleteReview(reviewId) {
+    if (!course?.id) {
+      return
+    }
+
+    setReviewError('')
+    try {
+      await deleteReviewRequest(reviewId)
+      const data = await getCourseReviewsRequest(course.id, { page: 0, size: 20 })
+      setReviewsData({ reviews: data?.reviews ?? [], totalItems: data?.totalItems ?? 0 })
+      reviewForm.reset({ rating: '5', comment: '' })
+      setNotice('Review deleted successfully.')
+    } catch (error) {
+      setReviewError(error.message)
+    }
   }
 
   if (loading) {
@@ -138,6 +219,60 @@ function CourseDetailPage() {
                 ))}
               </div>
             </div>
+
+            {!isAdmin ? (
+              <div className="space-y-5 border-t border-line pt-6">
+                <div className="space-y-2">
+                  <h2 className="type-display-2xl text-ink-950">Reviews</h2>
+                  <p className="type-body-sm text-ink-700">{reviewsData.totalItems} review(s) from enrolled learners.</p>
+                </div>
+
+                <FeedbackMessage type="error">{reviewError}</FeedbackMessage>
+
+                {token ? (
+                  <form className="auth-form-grid" onSubmit={reviewForm.handleSubmit(submitReview)}>
+                    <FormField
+                      id="review-rating"
+                      label="Rating"
+                      type="number"
+                      placeholder="1 to 5"
+                      registration={reviewForm.register('rating', { required: 'Rating is required', min: 1, max: 5 })}
+                      error={reviewForm.formState.errors.rating?.message}
+                    />
+                    <TextareaField
+                      id="review-comment"
+                      label="Comment"
+                      placeholder="Share your thoughts about this course"
+                      registration={reviewForm.register('comment')}
+                    />
+                    <div className="flex flex-wrap gap-3">
+                      <button className="btn-primary" type="submit">{myReview ? 'Update review' : 'Submit review'}</button>
+                      {myReview ? <button className="btn-ghost" type="button" onClick={() => handleDeleteReview(myReview.id)}>Delete review</button> : null}
+                    </div>
+                  </form>
+                ) : (
+                  <div className="empty-panel">Sign in and enroll in this course to leave a review.</div>
+                )}
+
+                <div className="review-list-grid">
+                  {reviewsData.reviews.length > 0 ? (
+                    reviewsData.reviews.map((review) => (
+                      <article key={review.id} className="review-card">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="type-title-sm text-ink-950">{review.userName}</p>
+                            <p className="course-rating-row"><span className="course-rating-value">{review.rating.toFixed(1)}</span><span className="course-rating-star">★</span></p>
+                          </div>
+                        </div>
+                        <p className="type-body-sm text-ink-700">{review.comment || 'No written comment provided.'}</p>
+                      </article>
+                    ))
+                  ) : (
+                    <div className="empty-panel">No reviews yet for this course.</div>
+                  )}
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <aside className="surface-panel detail-side-panel">

@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { changePasswordRequest } from '../api/auth'
+import { uploadMediaRequest } from '../api/upload'
 import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
 import FormField from '../components/common/FormField.jsx'
 import PageHero from '../components/common/PageHero.jsx'
+import UploadField from '../components/common/UploadField.jsx'
 import { useAuthStore } from '../store/authStore'
 
 function ProfilePage() {
@@ -16,6 +18,7 @@ function ProfilePage() {
   const [profileMessage, setProfileMessage] = useState('')
   const [profileError, setProfileError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const [uploading, setUploading] = useState(false)
 
   const profileForm = useForm({
     defaultValues: {
@@ -59,6 +62,27 @@ function ProfilePage() {
       navigate('/login', { replace: true })
     } catch (error) {
       setPasswordError(error.message)
+    }
+  }
+
+  async function handleAvatarUpload(event) {
+    const file = event.target.files?.[0]
+    if (!file) {
+      return
+    }
+
+    setUploading(true)
+    setProfileError('')
+    setProfileMessage('')
+    try {
+      const media = await uploadMediaRequest({ file, purpose: 'AVATAR' })
+      profileForm.setValue('avatarUrl', media.publicUrl, { shouldDirty: true })
+      setProfileMessage('Avatar uploaded. Save profile to apply the new image.')
+    } catch (error) {
+      setProfileError(error.message)
+    } finally {
+      setUploading(false)
+      event.target.value = ''
     }
   }
 
@@ -112,6 +136,7 @@ function ProfilePage() {
                 registration={profileForm.register('avatarUrl')}
                 error={profileForm.formState.errors.avatarUrl?.message}
               />
+              <UploadField id="profile-avatar-upload" label="Upload avatar" helper="PNG, JPG, WEBP, or GIF" onChange={handleAvatarUpload} uploading={uploading} />
               <FeedbackMessage type="error">{profileError}</FeedbackMessage>
               <FeedbackMessage type="success">{profileMessage}</FeedbackMessage>
               <button className="btn-primary w-full justify-center" type="submit" disabled={loading}>

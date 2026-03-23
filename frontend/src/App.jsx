@@ -6,6 +6,7 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx'
 import AdminCoursesPage from './pages/admin/AdminCoursesPage.jsx'
 import AdminOrdersPage from './pages/admin/AdminOrdersPage.jsx'
 import AdminUsersPage from './pages/admin/AdminUsersPage.jsx'
+import AdminCategoriesPage from './pages/admin/AdminCategoriesPage.jsx'
 import CheckoutPage from './pages/CheckoutPage.jsx'
 import CourseDetailPage from './pages/CourseDetailPage.jsx'
 import CoursesPage from './pages/CoursesPage.jsx'
@@ -97,6 +98,14 @@ function App() {
           element={
             <AdminRoute>
               <AdminOrdersPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/categories"
+          element={
+            <AdminRoute>
+              <AdminCategoriesPage />
             </AdminRoute>
           }
         />

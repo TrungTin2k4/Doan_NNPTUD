@@ -47,6 +47,7 @@ function AdminDashboardPage() {
       <section className="section-shell">
         <div className="admin-link-grid">
           <Link className="surface-panel no-underline" to="/admin/courses"><h2 className="type-title-lg text-ink-950">Courses</h2></Link>
+          <Link className="surface-panel no-underline" to="/admin/categories"><h2 className="type-title-lg text-ink-950">Categories</h2></Link>
           <Link className="surface-panel no-underline" to="/admin/orders"><h2 className="type-title-lg text-ink-950">Orders</h2></Link>
           <Link className="surface-panel no-underline" to="/admin/users"><h2 className="type-title-lg text-ink-950">Users</h2></Link>
         </div>

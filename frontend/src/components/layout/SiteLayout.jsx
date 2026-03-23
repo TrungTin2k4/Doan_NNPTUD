@@ -14,7 +14,7 @@ function SiteLayout() {
     <main className="min-h-screen bg-canvas text-ink-700">
       <div className="promo-strip">
         <p className="type-body-sm text-ink-950">
-          Save 25% on every course today and start learning with modern, practical lessons.
+          Future-ready skills on your schedule. Save 25% on selected courses today.
         </p>
       </div>
 

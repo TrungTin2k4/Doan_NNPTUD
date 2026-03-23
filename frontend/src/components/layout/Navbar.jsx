@@ -61,7 +61,7 @@ function Navbar() {
           {user ? (
             <>
               {!isAdmin ? (
-                <Link aria-label="Checkout" className="icon-action no-underline" to="/checkout">
+              <Link aria-label="Checkout" className="icon-action no-underline" to="/checkout">
                   <Icon name="checkout" className="h-5 w-5" />
                 </Link>
               ) : null}

@@ -17,6 +17,9 @@ export function buildCourseCardModel(course, options = {}) {
     title: course.title,
     summary,
     thumbnail: course.thumbnail || null,
+    instructor: course.instructor || 'EduLearn Team',
+    rating: course.rating || null,
+    reviewsCount: course.reviewsCount || 0,
     stats:
       options.stats ||
       [course.duration ? `${course.duration} min` : null, course.category || null]

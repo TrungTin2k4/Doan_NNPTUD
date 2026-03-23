@@ -33,6 +33,14 @@ function CourseCard({ course }) {
       <div className="course-card-body">
         {course.stats ? <p className="type-caption text-brand-600">{course.stats}</p> : null}
         <h3 className="type-title-lg text-ink-950 course-title-clamp">{course.title}</h3>
+        {course.instructor ? <p className="course-instructor-line">{course.instructor}</p> : null}
+        {course.rating ? (
+          <div className="course-rating-row">
+            <span className="course-rating-value">{Number(course.rating).toFixed(1)}</span>
+            <span className="course-rating-star">★</span>
+            <span className="course-rating-count">{course.reviewsCount.toLocaleString()} ratings</span>
+          </div>
+        ) : null}
         <p className="type-body-md text-ink-700 course-summary-clamp">{course.summary}</p>
         <div className="course-card-footer">
           <div className="flex items-center justify-between gap-3 pt-1">
