@@ -11,7 +11,7 @@ export async function getCourseProgressRequest(courseId) {
 }
 
 export async function completeLessonRequest(courseId, lessonId) {
-  const response = await apiClient.put(`/api/progress/${courseId}/lesson/${lessonId}`)
+  const response = await apiClient.post('/api/progress/complete', { courseId, lessonId })
   return unwrapData(response)
 }
 
@@ -20,7 +20,17 @@ export async function getVideoPositionRequest(lessonId) {
   return unwrapData(response)
 }
 
-export async function saveVideoPositionRequest(lessonId, payload) {
-  const response = await apiClient.post(`/api/progress/position/${lessonId}`, payload)
+export async function saveVideoPositionRequest(courseId, lessonId, position) {
+  const response = await apiClient.put(`/api/progress/${courseId}/video-position`, undefined, {
+    params: {
+      lessonId,
+      position,
+    },
+  })
+  return unwrapData(response)
+}
+
+export async function getProgressCoursesRequest() {
+  const response = await apiClient.get('/api/progress/courses')
   return unwrapData(response)
 }

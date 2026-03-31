@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getCourseCategoriesRequest, getCoursesRequest } from '../api/courses'
+import { getCoursesRequest } from '../api/courses'
+import { getPublicCategoriesRequest } from '../api/categories'
 import CourseCard from '../components/common/CourseCard.jsx'
 import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
 import FilterBar from '../components/common/FilterBar.jsx'
@@ -19,8 +20,8 @@ function CoursesPage() {
   useEffect(() => {
     async function loadStaticBits() {
       try {
-        const nextCategories = await getCourseCategoriesRequest()
-        setCategories(['All', ...(nextCategories ?? [])])
+        const nextCategories = await getPublicCategoriesRequest()
+        setCategories(['All', ...((nextCategories ?? []).map((item) => item.name))])
       } catch {
         setCategories(defaultCourseFilters)
       }

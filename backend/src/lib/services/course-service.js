@@ -22,7 +22,7 @@ function toCourseSummary(course) {
         reviewsCount: course.reviewsCount,
     };
 }
-function toPublicCourseDetail(course) {
+function toCourseDetail(course, includeAllVideoUrls = false) {
     const sections = Array.isArray(course.sections)
         ? course.sections.map((section) => ({
             id: section.id,
@@ -35,7 +35,7 @@ function toPublicCourseDetail(course) {
                         title: lesson.title,
                         duration: lesson.duration,
                         isPreview: lesson.isPreview === true,
-                        videoUrl: lesson.isPreview === true ? (_a = lesson.videoUrl) !== null && _a !== void 0 ? _a : null : null,
+                        videoUrl: includeAllVideoUrls || lesson.isPreview === true ? (_a = lesson.videoUrl) !== null && _a !== void 0 ? _a : null : null,
                     });
                 })
                 : [],
@@ -199,7 +199,15 @@ export async function getCourseBySlugPublic(slug) {
     if (!course) {
         throw new NotFoundError("Course not found");
     }
-    return toPublicCourseDetail(course.toObject({ virtuals: true }));
+    return toCourseDetail(course.toObject({ virtuals: true }), false);
+}
+export async function getCourseBySlugForEnrolledUser(slug) {
+    await connectToDatabase();
+    const course = await CourseModel.findOne({ slug, status: "PUBLISHED" }).exec();
+    if (!course) {
+        throw new NotFoundError("Course not found");
+    }
+    return toCourseDetail(course.toObject({ virtuals: true }), true);
 }
 export async function getCourseById(id) {
     await connectToDatabase();

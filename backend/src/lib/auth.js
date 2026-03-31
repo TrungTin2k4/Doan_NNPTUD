@@ -84,3 +84,23 @@ export async function requireAdmin(request) {
     }
     return user;
 }
+export async function tryGetAuthUser(request) {
+    await connectToDatabase();
+    const token = extractBearerToken(request);
+    if (!token) {
+        return null;
+    }
+    const claims = verifyJwtToken(token);
+    if (!claims) {
+        return null;
+    }
+    const user = await UserModel.findById(claims.sub).exec();
+    if (!user) {
+        return null;
+    }
+    const userObj = user.toObject({ virtuals: true });
+    if (userObj.enabled === false || userObj.tokenVersion !== claims.tokenVersion) {
+        return null;
+    }
+    return userObj;
+}

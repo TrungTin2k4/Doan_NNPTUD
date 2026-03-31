@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getCourseCategoriesRequest, getFeaturedCoursesRequest } from '../api/courses'
+import { getFeaturedCoursesRequest } from '../api/courses'
+import { getPublicCategoriesRequest } from '../api/categories'
 import CourseCard from '../components/common/CourseCard.jsx'
 import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
 import Icon from '../components/common/Icon.jsx'
@@ -25,13 +26,10 @@ function HomePage() {
       setErrorMessage('')
 
       try {
-        const [featured, nextCategories] = await Promise.all([
-          getFeaturedCoursesRequest(),
-          getCourseCategoriesRequest(),
-        ])
+        const [featured, nextCategories] = await Promise.all([getFeaturedCoursesRequest(), getPublicCategoriesRequest()])
 
         setFeaturedCourses(featured ?? [])
-        setCategories(nextCategories ?? [])
+        setCategories((nextCategories ?? []).map((item) => item.name))
       } catch (error) {
         setErrorMessage(error.message)
       } finally {

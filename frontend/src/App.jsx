@@ -14,7 +14,9 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import LearnCoursePage from './pages/LearnCoursePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
+import MediaLibraryPage from './pages/MediaLibraryPage.jsx'
 import MyLearningPage from './pages/MyLearningPage.jsx'
+import OrderDetailPage from './pages/OrderDetailPage.jsx'
 import OrderHistoryPage from './pages/OrderHistoryPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
@@ -54,10 +56,26 @@ function App() {
           }
         />
         <Route
+          path="/media"
+          element={
+            <ProtectedRoute>
+              <MediaLibraryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/orders"
           element={
             <ProtectedRoute>
               <OrderHistoryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:orderId"
+          element={
+            <ProtectedRoute>
+              <OrderDetailPage />
             </ProtectedRoute>
           }
         />

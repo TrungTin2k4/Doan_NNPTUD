@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { getCourseProgressRequest, getMyLearningRequest } from '../api/progress'
+import { getCourseProgressRequest, getProgressCoursesRequest } from '../api/progress'
 import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
 import PageHero from '../components/common/PageHero.jsx'
 import { useAuthStore } from '../store/authStore'
@@ -22,7 +22,7 @@ function MyLearningPage() {
       setErrorMessage('')
 
       try {
-        const learningCourses = await getMyLearningRequest()
+        const learningCourses = await getProgressCoursesRequest()
         setCourses(learningCourses ?? [])
 
         const progressEntries = await Promise.all(

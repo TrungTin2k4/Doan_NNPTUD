@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { getOrdersRequest } from '../api/orders'
 import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
 import PageHero from '../components/common/PageHero.jsx'
@@ -77,6 +77,7 @@ function OrderHistoryPage() {
                       </div>
                     ))}
                   </div>
+                  <Link className="text-link" to={`/orders/${order.id}`}>View details</Link>
                 </article>
               ))
             ) : (

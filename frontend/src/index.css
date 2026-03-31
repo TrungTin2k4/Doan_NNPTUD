@@ -1229,6 +1229,20 @@
     box-shadow: var(--shadow-card);
   }
 
+  .media-grid {
+    @apply grid gap-4 md:grid-cols-2 xl:grid-cols-3;
+  }
+
+  .media-card {
+    @apply flex h-full flex-col gap-4 rounded-[1.2rem] border bg-white p-4;
+    border-color: var(--color-line);
+    box-shadow: var(--shadow-card);
+  }
+
+  .media-thumb {
+    @apply h-48 w-full rounded-[1rem] object-cover;
+  }
+
   .admin-course-action-box {
     @apply rounded-[1rem] border p-4;
     border-color: rgba(47, 125, 114, 0.2);
@@ -1335,6 +1349,16 @@
     @apply rounded-[1.5rem] border p-4;
     border-color: var(--color-line);
     background-color: rgba(255, 255, 255, 0.74);
+  }
+
+  .player-media-shell {
+    @apply overflow-hidden rounded-[1.2rem] border;
+    border-color: var(--color-line);
+    background-color: #101626;
+  }
+
+  .player-media-frame {
+    @apply block min-h-[22rem] w-full border-0;
   }
 
   .player-screen {

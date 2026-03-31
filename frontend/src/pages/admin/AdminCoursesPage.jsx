@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import {
   createAdminCourseRequest,
@@ -18,7 +18,33 @@ import TextareaField from '../../components/common/TextareaField.jsx'
 import UploadField from '../../components/common/UploadField.jsx'
 import { formatPrice } from '../../lib/courseUi'
 
+function normalizeSections(sections = []) {
+  return sections.map((section) => ({
+    title: section.title || '',
+    lessons: (section.lessons ?? []).map((lesson) => ({
+      title: lesson.title || '',
+      videoUrl: lesson.videoUrl || '',
+      duration: lesson.duration ?? 0,
+      isPreview: lesson.isPreview === true,
+    })),
+  }))
+}
+
 function toPayload(values) {
+  const sections = (values.sections ?? [])
+    .filter((section) => (section.title || '').trim().length > 0)
+    .map((section) => ({
+      title: section.title.trim(),
+      lessons: (section.lessons ?? [])
+        .filter((lesson) => (lesson.title || '').trim().length > 0)
+        .map((lesson) => ({
+          title: lesson.title.trim(),
+          videoUrl: (lesson.videoUrl || '').trim() || null,
+          duration: Number(lesson.duration ?? 0),
+          isPreview: lesson.isPreview === true,
+        })),
+    }))
+
   return {
     title: values.title,
     description: values.description || null,
@@ -29,8 +55,64 @@ function toPayload(values) {
     price: Number(values.price),
     originalPrice: values.originalPrice ? Number(values.originalPrice) : null,
     isPublished: values.status === 'PUBLISHED',
-    sections: [],
+    sections,
   }
+}
+
+function LessonFields({ control, register, sectionIndex }) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `sections.${sectionIndex}.lessons`,
+  })
+
+  return (
+    <div className="space-y-3 rounded-[1rem] border p-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="type-title-sm text-ink-950">Lessons</p>
+        <button className="btn-ghost" type="button" onClick={() => append({ title: '', videoUrl: '', duration: 0, isPreview: false })}>
+          Add lesson
+        </button>
+      </div>
+      <div className="space-y-3">
+        {fields.map((field, lessonIndex) => (
+          <div key={field.id} className="rounded-[1rem] border p-4">
+            <div className="grid gap-3 md:grid-cols-2">
+              <FormField
+                id={`section-${sectionIndex}-lesson-${lessonIndex}-title`}
+                label="Lesson title"
+                placeholder="Introduction"
+                registration={register(`sections.${sectionIndex}.lessons.${lessonIndex}.title`)}
+              />
+              <FormField
+                id={`section-${sectionIndex}-lesson-${lessonIndex}-duration`}
+                label="Duration (min)"
+                type="number"
+                placeholder="12"
+                registration={register(`sections.${sectionIndex}.lessons.${lessonIndex}.duration`)}
+              />
+            </div>
+            <div className="mt-3 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+              <FormField
+                id={`section-${sectionIndex}-lesson-${lessonIndex}-video`}
+                label="Video URL"
+                placeholder="https://..."
+                registration={register(`sections.${sectionIndex}.lessons.${lessonIndex}.videoUrl`)}
+              />
+              <label className="check-row">
+                <input type="checkbox" {...register(`sections.${sectionIndex}.lessons.${lessonIndex}.isPreview`)} />
+                <span>Preview lesson</span>
+              </label>
+            </div>
+            <div className="mt-3 flex justify-end">
+              <button className="btn-ghost" type="button" onClick={() => remove(lessonIndex)}>
+                Remove lesson
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 function AdminCoursesPage() {
@@ -55,7 +137,12 @@ function AdminCoursesPage() {
       price: '',
       originalPrice: '',
       status: 'DRAFT',
+      sections: [],
     },
+  })
+  const { fields: sectionFields, append: appendSection, remove: removeSection } = useFieldArray({
+    control: form.control,
+    name: 'sections',
   })
 
   const editId = searchParams.get('edit')
@@ -73,6 +160,7 @@ function AdminCoursesPage() {
         price: String(course.price ?? ''),
         originalPrice: course.originalPrice ? String(course.originalPrice) : '',
         status: course.status || 'DRAFT',
+        sections: normalizeSections(course.sections),
       })
     },
     [form],
@@ -138,6 +226,7 @@ function AdminCoursesPage() {
       price: '',
       originalPrice: '',
       status: 'DRAFT',
+      sections: [],
     })
     const nextParams = new URLSearchParams(searchParams)
     nextParams.delete('edit')
@@ -241,6 +330,37 @@ function AdminCoursesPage() {
               <SelectField id="course-status" label="Status" registration={form.register('status')} options={[{ value: 'DRAFT', label: 'Draft' }, { value: 'PUBLISHED', label: 'Published' }]} />
               <FormField id="course-price" label="Price" type="number" placeholder="29" registration={form.register('price', { required: 'Price is required' })} error={form.formState.errors.price?.message} />
               <FormField id="course-original-price" label="Original price" type="number" placeholder="49" registration={form.register('originalPrice')} />
+              <div className="auth-grid-span-2 space-y-4 rounded-[1rem] border p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="type-title-lg text-ink-950">Course content</p>
+                    <p className="type-body-sm text-ink-700">Add sections, lessons, durations, and video URLs for the learning player.</p>
+                  </div>
+                  <button className="btn-secondary" type="button" onClick={() => appendSection({ title: '', lessons: [] })}>
+                    Add section
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  {sectionFields.map((section, sectionIndex) => (
+                    <div key={section.id} className="space-y-4 rounded-[1rem] border p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <FormField
+                          id={`section-${sectionIndex}-title`}
+                          label={`Section ${sectionIndex + 1}`}
+                          placeholder="Section title"
+                          registration={form.register(`sections.${sectionIndex}.title`)}
+                          className="w-full"
+                        />
+                        <button className="btn-ghost" type="button" onClick={() => removeSection(sectionIndex)}>
+                          Remove section
+                        </button>
+                      </div>
+                      <LessonFields control={form.control} register={form.register} sectionIndex={sectionIndex} />
+                    </div>
+                  ))}
+                  {sectionFields.length === 0 ? <div className="empty-panel">No sections yet. Add a section to make the course watchable in the player.</div> : null}
+                </div>
+              </div>
               <button className="btn-primary auth-grid-span-2 w-full justify-center" type="submit">{editingCourse ? 'Update course' : 'Create course'}</button>
             </form>
           </div>
