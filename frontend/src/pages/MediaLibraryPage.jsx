@@ -3,6 +3,7 @@ import { deleteUploadRequest, getUploadsRequest, uploadMediaRequest } from '../a
 import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
 import PageHero from '../components/common/PageHero.jsx'
 import UploadField from '../components/common/UploadField.jsx'
+import { resolveMediaUrl } from '../lib/media'
 
 function MediaLibraryPage() {
   const [assets, setAssets] = useState([])
@@ -78,7 +79,7 @@ function MediaLibraryPage() {
           <div className="media-grid">
             {assets.map((asset) => (
               <article key={asset.id} className="media-card">
-                <img alt={asset.originalName} className="media-thumb" src={`http://localhost:8080${asset.publicUrl}`} />
+                <img alt={asset.originalName} className="media-thumb" src={resolveMediaUrl(asset.publicUrl)} />
                 <div className="space-y-2">
                   <p className="type-title-sm text-ink-950">{asset.originalName}</p>
                   <p className="type-body-sm text-ink-700">{asset.purpose}</p>

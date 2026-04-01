@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Icon from './Icon.jsx'
 import { useAuthStore } from '../../store/authStore'
+import { resolveMediaUrl } from '../../lib/media'
 
 function CourseCard({ course }) {
   const user = useAuthStore((state) => state.user)
@@ -16,15 +17,16 @@ function CourseCard({ course }) {
   const detailHref = isAdmin && course.id ? `/admin/courses?edit=${course.id}` : course.slug ? `/courses/${course.slug}` : null
   const detailLabel = isAdmin ? 'Edit course' : 'View details'
   const shouldShowMore = (course.title?.length ?? 0) > 42 || (course.summary?.length ?? 0) > 120
-  const thumbStyle = course.thumbnail
+  const thumbnailUrl = resolveMediaUrl(course.thumbnail)
+  const thumbStyle = thumbnailUrl
     ? {
-        backgroundImage: `linear-gradient(180deg, rgba(16, 22, 39, 0.04), rgba(16, 22, 39, 0.28)), url(${course.thumbnail})`,
+        backgroundImage: `linear-gradient(180deg, rgba(16, 22, 39, 0.04), rgba(16, 22, 39, 0.28)), url(${thumbnailUrl})`,
       }
     : undefined
 
   return (
     <article className="course-card course-card-lg">
-      <div className={`course-thumb ${toneClass} ${course.thumbnail ? 'course-thumb-image' : ''}`} style={thumbStyle}>
+      <div className={`course-thumb ${toneClass} ${thumbnailUrl ? 'course-thumb-image' : ''}`} style={thumbStyle}>
         <div className="thumb-chip">
           <Icon name={iconName} className="h-4 w-4" />
           <span>{course.level}</span>

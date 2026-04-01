@@ -6,6 +6,7 @@ import CourseCard from '../components/common/CourseCard.jsx'
 import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
 import Icon from '../components/common/Icon.jsx'
 import { homeFeatures, homeTests } from '../data/content'
+import { resolveMediaUrl } from '../lib/media'
 import { buildCourseCardModel, formatPrice } from '../lib/courseUi'
 import { useAuthStore } from '../store/authStore'
 
@@ -71,6 +72,7 @@ function HomePage() {
         stats: `${activeCourse.duration || 0} min / ${(activeCourse.reviewsCount ?? 0) || 0} reviews`,
       })
     : null
+  const activeThumbnailUrl = resolveMediaUrl(activeCard?.thumbnail)
 
   const isAdmin = user?.role === 'ADMIN'
   const heroHref = activeCourse
@@ -136,11 +138,11 @@ function HomePage() {
               <div className="home-hero-tag home-hero-tag-right">
                 <span>{featuredCourses.length > 0 ? `${activeIndex + 1} / ${featuredCourses.length}` : 'Top course'}</span>
               </div>
-              {activeCard?.thumbnail ? (
+              {activeThumbnailUrl ? (
                 <div
                   className="home-hero-photo"
                   style={{
-                    backgroundImage: `linear-gradient(180deg, rgba(19, 24, 39, 0.08), rgba(19, 24, 39, 0.22)), url(${activeCard.thumbnail})`,
+                    backgroundImage: `linear-gradient(180deg, rgba(19, 24, 39, 0.08), rgba(19, 24, 39, 0.22)), url(${activeThumbnailUrl})`,
                   }}
                 />
               ) : (

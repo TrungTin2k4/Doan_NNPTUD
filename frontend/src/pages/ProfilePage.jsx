@@ -7,6 +7,7 @@ import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
 import FormField from '../components/common/FormField.jsx'
 import PageHero from '../components/common/PageHero.jsx'
 import UploadField from '../components/common/UploadField.jsx'
+import { resolveMediaUrl } from '../lib/media'
 import { useAuthStore } from '../store/authStore'
 
 function ProfilePage() {
@@ -19,6 +20,9 @@ function ProfilePage() {
   const [profileError, setProfileError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [failedAvatarPreviewSrc, setFailedAvatarPreviewSrc] = useState('')
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState(null)
+  const [localAvatarPreviewUrl, setLocalAvatarPreviewUrl] = useState('')
 
   const profileForm = useForm({
     defaultValues: {
@@ -34,6 +38,17 @@ function ProfilePage() {
     },
   })
 
+  const profileName = profileForm.watch('fullName') || user?.fullName || ''
+  const avatarPreviewUrl = profileForm.watch('avatarUrl') || ''
+  const resolvedAvatarPreviewUrl = localAvatarPreviewUrl || resolveMediaUrl(avatarPreviewUrl)
+  const shouldShowAvatarPreview = resolvedAvatarPreviewUrl && failedAvatarPreviewSrc !== resolvedAvatarPreviewUrl
+  const profileInitials = (profileName || 'U')
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || '')
+    .join('')
+
   useEffect(() => {
     profileForm.reset({
       fullName: user?.fullName || '',
@@ -41,15 +56,44 @@ function ProfilePage() {
     })
   }, [profileForm, user?.avatarUrl, user?.fullName])
 
+  useEffect(
+    () => () => {
+      if (localAvatarPreviewUrl) {
+        URL.revokeObjectURL(localAvatarPreviewUrl)
+      }
+    },
+    [localAvatarPreviewUrl],
+  )
+
   async function submitProfile(values) {
     setProfileMessage('')
     setProfileError('')
 
     try {
-      await updateProfile(values)
+      let nextAvatarUrl = values.avatarUrl
+
+      if (selectedAvatarFile) {
+        setUploading(true)
+        const media = await uploadMediaRequest({ file: selectedAvatarFile, purpose: 'AVATAR' })
+        nextAvatarUrl = media.publicUrl
+      }
+
+      const profile = await updateProfile({
+        ...values,
+        avatarUrl: nextAvatarUrl,
+      })
+
+      profileForm.reset({
+        fullName: profile?.fullName || values.fullName,
+        avatarUrl: profile?.avatarUrl || nextAvatarUrl || '',
+      })
+      setSelectedAvatarFile(null)
+      setLocalAvatarPreviewUrl('')
       setProfileMessage('Profile updated successfully.')
     } catch (error) {
       setProfileError(error.message)
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -71,19 +115,42 @@ function ProfilePage() {
       return
     }
 
-    setUploading(true)
     setProfileError('')
+    setProfileMessage('Selected image. Save profile to apply the new avatar.')
+    setSelectedAvatarFile(file)
+    setLocalAvatarPreviewUrl((currentValue) => {
+      if (currentValue) {
+        URL.revokeObjectURL(currentValue)
+      }
+
+      return URL.createObjectURL(file)
+    })
+    event.target.value = ''
+  }
+
+  function clearSelectedAvatar() {
+    setSelectedAvatarFile(null)
+    setLocalAvatarPreviewUrl('')
     setProfileMessage('')
-    try {
-      const media = await uploadMediaRequest({ file, purpose: 'AVATAR' })
-      profileForm.setValue('avatarUrl', media.publicUrl, { shouldDirty: true })
-      setProfileMessage('Avatar uploaded. Save profile to apply the new image.')
-    } catch (error) {
-      setProfileError(error.message)
-    } finally {
-      setUploading(false)
-      event.target.value = ''
+    setProfileError('')
+    setFailedAvatarPreviewSrc('')
+    profileForm.setValue('avatarUrl', user?.avatarUrl || '', { shouldDirty: true })
+  }
+
+  const avatarHelper = selectedAvatarFile ? `Selected: ${selectedAvatarFile.name}` : 'PNG, JPG, WEBP, or GIF'
+
+  const avatarDescription = selectedAvatarFile
+    ? 'New avatar selected. Save profile to update your account image.'
+    : 'Choose an image from your device and save the profile to apply it.'
+
+  const isSavingProfile = loading || uploading
+
+  function renderAvatarPreview() {
+    if (shouldShowAvatarPreview) {
+      return <img alt="" className="profile-avatar-preview-media" src={resolvedAvatarPreviewUrl} onError={() => setFailedAvatarPreviewSrc(resolvedAvatarPreviewUrl)} />
     }
+
+    return <div className="profile-avatar-preview-media profile-avatar-preview-fallback">{profileInitials}</div>
   }
 
   return (
@@ -94,20 +161,15 @@ function ProfilePage() {
         description="Update your display name, refresh your avatar, and keep your account secure from one place."
         aside={
           <div className="surface-panel profile-hero-card">
-            {user?.avatarUrl ? (
-              <img alt={user.fullName} className="profile-hero-avatar" src={user.avatarUrl} />
+            {shouldShowAvatarPreview ? (
+              <img alt="" className="profile-hero-avatar" src={resolvedAvatarPreviewUrl} onError={() => setFailedAvatarPreviewSrc(resolvedAvatarPreviewUrl)} />
             ) : (
               <div className="profile-hero-avatar profile-hero-avatar-fallback">
-                {(user?.fullName || 'U')
-                  .split(' ')
-                  .filter(Boolean)
-                  .slice(0, 2)
-                  .map((part) => part[0]?.toUpperCase() || '')
-                  .join('')}
+                {profileInitials}
               </div>
             )}
             <div className="space-y-1">
-              <p className="type-title-lg text-ink-950">{user?.fullName}</p>
+              <p className="type-title-lg text-ink-950">{profileName || 'User'}</p>
               <p className="type-body-sm text-ink-700">{user?.email}</p>
             </div>
           </div>
@@ -129,18 +191,20 @@ function ProfilePage() {
                 registration={profileForm.register('fullName', { required: 'Full name is required' })}
                 error={profileForm.formState.errors.fullName?.message}
               />
-              <FormField
-                id="profile-avatar"
-                label="Avatar URL"
-                placeholder="https://example.com/avatar.jpg"
-                registration={profileForm.register('avatarUrl')}
-                error={profileForm.formState.errors.avatarUrl?.message}
-              />
-              <UploadField id="profile-avatar-upload" label="Upload avatar" helper="PNG, JPG, WEBP, or GIF" onChange={handleAvatarUpload} uploading={uploading} />
+              <input type="hidden" {...profileForm.register('avatarUrl')} />
+              <div className="profile-avatar-preview">
+                {renderAvatarPreview()}
+                <div className="space-y-1">
+                  <p className="type-label text-brand-600">Avatar preview</p>
+                  <p className="type-body-sm text-ink-700">{avatarDescription}</p>
+                </div>
+              </div>
+              <UploadField id="profile-avatar-upload" label="Avatar image" helper={avatarHelper} onChange={handleAvatarUpload} uploading={uploading} valueLabel={selectedAvatarFile?.name} />
+              {selectedAvatarFile ? <button className="btn-ghost w-full justify-center" type="button" onClick={clearSelectedAvatar}>Remove selected image</button> : null}
               <FeedbackMessage type="error">{profileError}</FeedbackMessage>
               <FeedbackMessage type="success">{profileMessage}</FeedbackMessage>
-              <button className="btn-primary w-full justify-center" type="submit" disabled={loading}>
-                {loading ? 'Saving profile...' : 'Save profile'}
+              <button className="btn-primary w-full justify-center" type="submit" disabled={isSavingProfile}>
+                {uploading ? 'Uploading avatar...' : loading ? 'Saving profile...' : 'Save profile'}
               </button>
             </form>
           </div>

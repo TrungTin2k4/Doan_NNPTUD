@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import Icon from '../common/Icon.jsx'
 import { useAuthStore } from '../../store/authStore'
+import { resolveMediaUrl } from '../../lib/media'
 
 const publicNavItems = [
   { to: '/', label: 'Home' },
@@ -11,6 +13,7 @@ function Navbar() {
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
   const isAdmin = user?.role === 'ADMIN'
+  const [failedAvatarSrc, setFailedAvatarSrc] = useState('')
   const initials = (user?.fullName || 'U')
     .split(' ')
     .filter(Boolean)
@@ -31,16 +34,19 @@ function Navbar() {
             ]),
       ]
     : publicNavItems
+  const avatarSrc = resolveMediaUrl(user?.avatarUrl)
+  const shouldShowAvatarImage = avatarSrc && failedAvatarSrc !== avatarSrc
 
   return (
     <header className="topbar-shell">
-      <div className="flex flex-wrap items-center gap-4 lg:flex-nowrap lg:gap-6">
+      <div className="topbar-layout">
+        <div className="topbar-primary">
         <Link className="brand-mark no-underline" to="/">
           <img alt="EduLearn logo" className="brand-mark-logo" src="/edulearn-logo.svg" />
-          <span className="type-title-lg text-ink-950">EduLearn</span>
+          <span className="type-title-lg text-ink-950 whitespace-nowrap">EduLearn</span>
         </Link>
 
-        <nav className="hidden items-center gap-5 lg:flex">
+          <nav className="topbar-nav">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -50,26 +56,28 @@ function Navbar() {
               {item.label}
             </NavLink>
           ))}
-        </nav>
-
-        <div className="search-shell lg:ml-auto">
-          <Icon name="search" className="h-5 w-5 text-ink-500" />
-          <input className="search-input" type="text" placeholder="Search for anything" />
+          </nav>
         </div>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="topbar-secondary">
+          <div className="search-shell topbar-search">
+          <Icon name="search" className="h-5 w-5 text-ink-500" />
+          <input className="search-input" type="text" placeholder="Search for anything" />
+          </div>
+
+          <div className="topbar-actions">
           {user ? (
             <>
               {!isAdmin ? (
-              <Link aria-label="Checkout" className="icon-action no-underline" to="/checkout">
+                <Link aria-label="Checkout" className="icon-action no-underline" to="/checkout">
                   <Icon name="checkout" className="h-5 w-5" />
                 </Link>
               ) : null}
               <details className="avatar-menu">
                 <summary className="avatar-trigger">
-                  <span className="avatar-trigger-name">{user.fullName}</span>
-                  {user.avatarUrl ? (
-                    <img alt={user.fullName} className="avatar-image" src={user.avatarUrl} />
+                  <span className="avatar-trigger-name" title={user.fullName}>{user.fullName}</span>
+                  {shouldShowAvatarImage ? (
+                    <img alt="" className="avatar-image" src={avatarSrc} onError={() => setFailedAvatarSrc(avatarSrc)} />
                   ) : (
                     <span className="avatar-fallback">{initials}</span>
                   )}
@@ -101,6 +109,7 @@ function Navbar() {
               </Link>
             </>
           )}
+          </div>
         </div>
       </div>
     </header>

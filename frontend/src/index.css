@@ -234,17 +234,41 @@
     box-shadow: var(--shadow-card);
   }
 
-.brand-mark {
-  @apply inline-flex items-center gap-3;
-}
+  .topbar-layout {
+    @apply flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between;
+  }
 
-.brand-mark-logo {
-  @apply h-12 w-12 rounded-2xl object-cover;
-  box-shadow: var(--shadow-card);
-}
+  .topbar-primary {
+    @apply flex min-w-0 flex-wrap items-center gap-4 lg:gap-6;
+  }
+
+  .topbar-nav {
+    @apply hidden items-center gap-5 lg:flex lg:flex-wrap lg:gap-6;
+  }
+
+  .topbar-secondary {
+    @apply flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center xl:flex-1 xl:justify-end;
+  }
+
+  .topbar-search {
+    @apply lg:flex-1 xl:max-w-[32rem];
+  }
+
+  .topbar-actions {
+    @apply hidden items-center gap-3 lg:flex lg:flex-shrink-0;
+  }
+
+  .brand-mark {
+    @apply inline-flex flex-shrink-0 items-center gap-3;
+  }
+
+  .brand-mark-logo {
+    @apply h-12 w-12 rounded-2xl object-cover;
+    box-shadow: var(--shadow-card);
+  }
 
   .nav-link {
-    @apply text-sm font-medium no-underline transition duration-200;
+    @apply whitespace-nowrap text-sm font-medium no-underline transition duration-200;
     color: var(--color-ink-700);
   }
 
@@ -276,13 +300,13 @@
   }
 
   .avatar-trigger {
-    @apply inline-flex cursor-pointer items-center gap-3 rounded-full border bg-white px-3 py-2;
+    @apply inline-flex max-w-full cursor-pointer items-center gap-3 rounded-full border bg-white px-3 py-2;
     border-color: var(--color-line);
     box-shadow: var(--shadow-card);
   }
 
   .avatar-trigger-name {
-    @apply text-sm font-semibold;
+    @apply max-w-[11rem] truncate text-sm font-semibold;
     color: var(--color-ink-950);
   }
 
@@ -327,7 +351,7 @@
   }
 
   .search-shell {
-    @apply flex min-h-[54px] w-full items-center gap-3 rounded-full border bg-white px-5 lg:max-w-[32rem];
+    @apply flex min-h-[54px] w-full min-w-0 items-center gap-3 rounded-full border bg-white px-5;
     border-color: var(--color-line);
   }
 
@@ -1323,7 +1347,7 @@
   }
 
   .profile-hero-card {
-    @apply flex items-center gap-4;
+    @apply flex flex-col items-start gap-4 sm:flex-row sm:items-center;
   }
 
   .profile-hero-avatar {
@@ -1332,6 +1356,23 @@
 
   .profile-hero-avatar-fallback {
     @apply inline-flex items-center justify-center text-lg font-bold;
+    background: linear-gradient(135deg, rgba(186, 122, 42, 0.92), rgba(47, 125, 114, 0.88));
+    color: white;
+  }
+
+  .profile-avatar-preview {
+    @apply flex flex-col items-start gap-4 rounded-[1.25rem] border px-4 py-4 sm:flex-row sm:items-center;
+    border-color: var(--color-line);
+    background-color: rgba(255, 255, 255, 0.72);
+  }
+
+  .profile-avatar-preview-media {
+    @apply h-20 w-20 flex-shrink-0 rounded-full object-cover;
+    box-shadow: var(--shadow-card);
+  }
+
+  .profile-avatar-preview-fallback {
+    @apply inline-flex items-center justify-center text-xl font-bold;
     background: linear-gradient(135deg, rgba(186, 122, 42, 0.92), rgba(47, 125, 114, 0.88));
     color: white;
   }
