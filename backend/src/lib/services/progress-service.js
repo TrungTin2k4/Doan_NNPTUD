@@ -24,6 +24,18 @@ function ensureLessonBelongsToCourse(course, lessonId) {
     }
     return lessonIds;
 }
+function normalizeLessonPositionMap(rawMap) {
+    if (!rawMap) {
+        return new Map();
+    }
+    if (rawMap instanceof Map) {
+        return rawMap;
+    }
+    if (typeof rawMap === "object") {
+        return new Map(Object.entries(rawMap));
+    }
+    return new Map();
+}
 export async function createProgress(userId, courseId) {
     await connectToDatabase();
     const existing = await ProgressModel.findOne({ userId, courseId }).exec();
@@ -36,6 +48,7 @@ export async function createProgress(userId, courseId) {
         progressPercent: 0,
         completedLessonIds: [],
         lastVideoPosition: 0,
+        lessonPositions: {},
     });
     return progress.toObject({ virtuals: true });
 }
@@ -135,6 +148,11 @@ export async function getVideoPositionByLesson(userId, lessonId) {
     if (!progressDoc) {
         return 0;
     }
+    const lessonPositions = normalizeLessonPositionMap(progressDoc.lessonPositions);
+    const lessonPosition = Number(lessonPositions.get(lessonId));
+    if (!Number.isNaN(lessonPosition) && lessonPosition >= 0) {
+        return lessonPosition;
+    }
     return Number(progressDoc.lastVideoPosition !== null && progressDoc.lastVideoPosition !== void 0 ? progressDoc.lastVideoPosition : 0);
 }
 export async function updateVideoPositionByLesson(userId, lessonId, position) {
@@ -144,6 +162,9 @@ export async function updateVideoPositionByLesson(userId, lessonId, position) {
     }
     const course = await getCourseById(String(progressDoc.courseId));
     ensureLessonBelongsToCourse(course, lessonId);
+    const lessonPositions = normalizeLessonPositionMap(progressDoc.lessonPositions);
+    lessonPositions.set(lessonId, position);
+    progressDoc.lessonPositions = lessonPositions;
     progressDoc.currentLessonId = lessonId;
     progressDoc.lastVideoPosition = position;
     await progressDoc.save();

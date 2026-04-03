@@ -6,8 +6,8 @@ import { resolveMediaUrl } from '../../lib/mediaUrl'
 function CourseCard({ course }) {
   const user = useAuthStore((state) => state.user)
   const isAdmin = user?.role === 'ADMIN'
-  const detailHref = isAdmin && course.id ? `/admin/courses?edit=${course.id}` : course.slug ? `/courses/${course.slug}` : null
-  const detailLabel = isAdmin ? 'Edit course' : 'View details'
+  const detailHref = course.slug ? `/courses/${course.slug}` : null
+  const detailLabel = 'View details'
   const thumbUrl = course.thumbnail ? resolveMediaUrl(course.thumbnail) : null
 
   return (

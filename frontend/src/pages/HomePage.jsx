@@ -6,12 +6,10 @@ import FeedbackMessage from '../components/common/FeedbackMessage.jsx'
 import Icon from '../components/common/Icon.jsx'
 import { buildCourseCardModel, formatPrice } from '../lib/courseUi'
 import { resolveMediaUrl } from '../lib/mediaUrl'
-import { useAuthStore } from '../store/authStore'
 
 const trustedBrands = ['Samsung', 'Cisco', 'Vimeo', 'P&G', 'HPE', 'Citi']
 
 function HomePage() {
-  const user = useAuthStore((state) => state.user)
   const [featuredCourses, setFeaturedCourses] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
@@ -73,12 +71,7 @@ function HomePage() {
   }, [activeTab, courseCards])
 
   const activeCourse = featuredCourses[activeIndex] ?? null
-  const isAdmin = user?.role === 'ADMIN'
-  const heroHref = activeCourse
-    ? isAdmin
-      ? `/admin/courses?edit=${activeCourse.id}`
-      : `/courses/${activeCourse.slug}`
-    : '/courses'
+  const heroHref = activeCourse ? `/courses/${activeCourse.slug}` : '/courses'
 
   return (
     <div className="space-y-12 lg:space-y-16">
@@ -95,7 +88,7 @@ function HomePage() {
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link className="inline-flex rounded-lg bg-[#2f1c6a] px-4 py-2.5 text-sm font-semibold text-white no-underline" to={heroHref}>
-                  {isAdmin ? 'Edit featured course' : 'Start learning'}
+                  Start learning
                 </Link>
                 <Link className="inline-flex rounded-lg border border-[#2f1c6a] px-4 py-2.5 text-sm font-semibold text-[#2f1c6a] no-underline" to="/courses">
                   Browse all courses

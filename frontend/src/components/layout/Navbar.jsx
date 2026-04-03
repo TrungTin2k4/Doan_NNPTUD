@@ -77,10 +77,6 @@ function Navbar() {
 
   function openSearchResult(course) {
     setSearchOpen(false)
-    if (isAdmin) {
-      navigate(`/admin/courses?edit=${course.id}`)
-      return
-    }
     navigate(course.slug ? `/courses/${course.slug}` : '/courses')
   }
 

@@ -16,7 +16,23 @@ import TextareaField from '../../components/common/TextareaField.jsx'
 import { formatPrice } from '../../lib/courseUi'
 import { getCourseCategoriesRequest } from '../../api/courses'
 
-function toPayload(values) {
+function normalizeSections(sections) {
+  return (sections ?? [])
+    .map((section) => ({
+      title: section.title?.trim() || '',
+      lessons: (section.lessons ?? [])
+        .map((lesson) => ({
+          title: lesson.title?.trim() || '',
+          videoUrl: lesson.videoUrl?.trim() || null,
+          duration: Number(lesson.duration ?? 0),
+          isPreview: lesson.isPreview === true,
+        }))
+        .filter((lesson) => lesson.title),
+    }))
+    .filter((section) => section.title)
+}
+
+function toPayload(values, sections) {
   return {
     title: values.title,
     description: values.description || null,
@@ -27,7 +43,7 @@ function toPayload(values) {
     price: Number(values.price),
     originalPrice: values.originalPrice ? Number(values.originalPrice) : null,
     isPublished: values.status === 'PUBLISHED',
-    sections: [],
+    sections: normalizeSections(sections),
   }
 }
 
@@ -38,6 +54,12 @@ function AdminCoursesPage() {
   const [search, setSearch] = useState('')
   const [categories, setCategories] = useState([])
   const [editingCourse, setEditingCourse] = useState(null)
+  const [sections, setSections] = useState([
+    {
+      title: '',
+      lessons: [{ title: '', videoUrl: '', duration: 0, isPreview: false }],
+    },
+  ])
   const [message, setMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -71,6 +93,23 @@ function AdminCoursesPage() {
         originalPrice: course.originalPrice ? String(course.originalPrice) : '',
         status: course.status || 'DRAFT',
       })
+
+      setSections(
+        course.sections?.length
+          ? course.sections.map((section) => ({
+              title: section.title || '',
+              lessons:
+                section.lessons?.length
+                  ? section.lessons.map((lesson) => ({
+                      title: lesson.title || '',
+                      videoUrl: lesson.videoUrl || '',
+                      duration: lesson.duration ?? 0,
+                      isPreview: lesson.isPreview === true,
+                    }))
+                  : [{ title: '', videoUrl: '', duration: 0, isPreview: false }],
+            }))
+          : [{ title: '', lessons: [{ title: '', videoUrl: '', duration: 0, isPreview: false }] }],
+      )
     },
     [form],
   )
@@ -136,6 +175,7 @@ function AdminCoursesPage() {
       originalPrice: '',
       status: 'DRAFT',
     })
+    setSections([{ title: '', lessons: [{ title: '', videoUrl: '', duration: 0, isPreview: false }] }])
     const nextParams = new URLSearchParams(searchParams)
     nextParams.delete('edit')
     setSearchParams(nextParams, { replace: true })
@@ -147,10 +187,10 @@ function AdminCoursesPage() {
 
     try {
       if (editingCourse) {
-        await updateAdminCourseRequest(editingCourse.id, toPayload(values))
+        await updateAdminCourseRequest(editingCourse.id, toPayload(values, sections))
         setMessage('Course updated successfully.')
       } else {
-        await createAdminCourseRequest(toPayload(values))
+        await createAdminCourseRequest(toPayload(values, sections))
         setMessage('Course created successfully.')
       }
 
@@ -159,6 +199,61 @@ function AdminCoursesPage() {
     } catch (error) {
       setErrorMessage(error.message)
     }
+  }
+
+  function addSection() {
+    setSections((current) => [...current, { title: '', lessons: [{ title: '', videoUrl: '', duration: 0, isPreview: false }] }])
+  }
+
+  function removeSection(sectionIndex) {
+    setSections((current) => current.filter((_, index) => index !== sectionIndex))
+  }
+
+  function updateSectionTitle(sectionIndex, value) {
+    setSections((current) =>
+      current.map((section, index) => (index === sectionIndex ? { ...section, title: value } : section)),
+    )
+  }
+
+  function addLesson(sectionIndex) {
+    setSections((current) =>
+      current.map((section, index) =>
+        index === sectionIndex
+          ? {
+              ...section,
+              lessons: [...section.lessons, { title: '', videoUrl: '', duration: 0, isPreview: false }],
+            }
+          : section,
+      ),
+    )
+  }
+
+  function removeLesson(sectionIndex, lessonIndex) {
+    setSections((current) =>
+      current.map((section, index) =>
+        index === sectionIndex
+          ? {
+              ...section,
+              lessons: section.lessons.filter((_, idx) => idx !== lessonIndex),
+            }
+          : section,
+      ),
+    )
+  }
+
+  function updateLesson(sectionIndex, lessonIndex, key, value) {
+    setSections((current) =>
+      current.map((section, sIndex) =>
+        sIndex === sectionIndex
+          ? {
+              ...section,
+              lessons: section.lessons.map((lesson, lIndex) =>
+                lIndex === lessonIndex ? { ...lesson, [key]: value } : lesson,
+              ),
+            }
+          : section,
+      ),
+    )
   }
 
   async function handleDelete(id) {
@@ -222,6 +317,80 @@ function AdminCoursesPage() {
               <SelectField id="course-status" label="Status" registration={form.register('status')} options={[{ value: 'DRAFT', label: 'Draft' }, { value: 'PUBLISHED', label: 'Published' }]} />
               <FormField id="course-price" label="Price" type="number" placeholder="29" registration={form.register('price', { required: 'Price is required' })} error={form.formState.errors.price?.message} />
               <FormField id="course-original-price" label="Original price" type="number" placeholder="49" registration={form.register('originalPrice')} />
+
+              <div className="auth-grid-span-2 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="type-label text-brand-600">Course sections and lessons</p>
+                  <button className="btn-secondary" type="button" onClick={addSection}>Add section</button>
+                </div>
+
+                {sections.map((section, sectionIndex) => (
+                  <div key={`section-${sectionIndex}`} className="surface-card space-y-3">
+                    <div className="flex items-center gap-3">
+                      <input
+                        className="field-input field-input-square"
+                        type="text"
+                        placeholder={`Section ${sectionIndex + 1} title`}
+                        value={section.title}
+                        onChange={(event) => updateSectionTitle(sectionIndex, event.target.value)}
+                      />
+                      <button className="btn-ghost" type="button" onClick={() => removeSection(sectionIndex)}>
+                        Remove section
+                      </button>
+                    </div>
+
+                    <div className="space-y-3">
+                      {section.lessons.map((lesson, lessonIndex) => (
+                        <div key={`lesson-${sectionIndex}-${lessonIndex}`} className="rounded-xl border border-line p-3 space-y-3">
+                          <div className="grid gap-3 md:grid-cols-2">
+                            <input
+                              className="field-input field-input-square"
+                              type="text"
+                              placeholder="Lesson title"
+                              value={lesson.title}
+                              onChange={(event) => updateLesson(sectionIndex, lessonIndex, 'title', event.target.value)}
+                            />
+                            <input
+                              className="field-input field-input-square"
+                              type="text"
+                              placeholder="YouTube or video URL"
+                              value={lesson.videoUrl}
+                              onChange={(event) => updateLesson(sectionIndex, lessonIndex, 'videoUrl', event.target.value)}
+                            />
+                          </div>
+
+                          <div className="grid gap-3 md:grid-cols-3 md:items-center">
+                            <input
+                              className="field-input field-input-square"
+                              type="number"
+                              min="0"
+                              placeholder="Duration (minutes)"
+                              value={lesson.duration}
+                              onChange={(event) => updateLesson(sectionIndex, lessonIndex, 'duration', Number(event.target.value || 0))}
+                            />
+                            <label className="type-body-sm text-ink-700 inline-flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={lesson.isPreview}
+                                onChange={(event) => updateLesson(sectionIndex, lessonIndex, 'isPreview', event.target.checked)}
+                              />
+                              Preview lesson
+                            </label>
+                            <button className="btn-ghost" type="button" onClick={() => removeLesson(sectionIndex, lessonIndex)}>
+                              Remove lesson
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button className="btn-secondary" type="button" onClick={() => addLesson(sectionIndex)}>
+                      Add lesson
+                    </button>
+                  </div>
+                ))}
+              </div>
+
               <button className="btn-primary auth-grid-span-2 w-full justify-center" type="submit">{editingCourse ? 'Update course' : 'Create course'}</button>
             </form>
           </div>

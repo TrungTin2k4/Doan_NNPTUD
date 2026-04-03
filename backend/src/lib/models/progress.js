@@ -6,6 +6,11 @@ const progressSchema = new Schema({
     completedLessonIds: { type: [String], default: [] },
     currentLessonId: { type: String, default: null, index: true },
     lastVideoPosition: { type: Number, default: 0 },
+    lessonPositions: {
+        type: Map,
+        of: Number,
+        default: {},
+    },
     progressPercent: { type: Number, default: 0 },
     completedAt: { type: Date, default: null },
 }, {
