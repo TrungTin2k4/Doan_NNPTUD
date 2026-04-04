@@ -1,5 +1,5 @@
-import { connectToDatabase } from "@/lib/db";
-import { UserModel } from "@/lib/models/user";
+import { connectToDatabase } from "@/utils/db";
+import { UserModel } from "@/schemas/user";
 function toAdminUserResponse(user) {
     return {
         id: user.id,

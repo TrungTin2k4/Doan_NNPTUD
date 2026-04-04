@@ -1,7 +1,7 @@
-import { requireAuth } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { removeCourseFromMyCart } from "@/lib/services/cart-service";
+import { requireAuth } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { removeCourseFromMyCart } from "@/controllers/cart-service";
 
 export async function OPTIONS(request) {
     return corsPreflight(request);

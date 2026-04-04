@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
-import { connectToDatabase } from "@/lib/db";
-import { ForbiddenError, UnauthorizedError } from "@/lib/errors";
-import { UserModel } from "@/lib/models/user";
-import { findActiveUserSessionByToken, touchSessionById } from "@/lib/services/user-session-service";
+import { connectToDatabase } from "@/utils/db";
+import { ForbiddenError, UnauthorizedError } from "@/utils/errors";
+import { UserModel } from "@/schemas/user";
+import { findActiveUserSessionByToken, touchSessionById } from "@/controllers/user-session-service";
 function getJwtSecret() {
     const secret = process.env.JWT_SECRET;
     if (!secret || secret.trim().length < 32) {

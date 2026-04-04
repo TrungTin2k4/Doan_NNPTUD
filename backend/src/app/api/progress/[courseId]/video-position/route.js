@@ -1,8 +1,8 @@
-import { requireAuth } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { BadRequestError } from "@/lib/errors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { updateVideoPosition } from "@/lib/services/progress-service";
+import { requireAuth } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { BadRequestError } from "@/utils/errors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { updateVideoPosition } from "@/controllers/progress-service";
 export async function OPTIONS(request) {
     return corsPreflight(request);
 }

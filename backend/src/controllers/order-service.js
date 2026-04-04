@@ -1,12 +1,12 @@
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError, ForbiddenError, NotFoundError, } from "@/lib/errors";
-import { CourseModel } from "@/lib/models/course";
-import { EnrollmentModel } from "@/lib/models/enrollment";
-import { OrderModel } from "@/lib/models/order";
-import { UserModel } from "@/lib/models/user";
-import { createOrActivateEnrollment } from "@/lib/services/enrollment-service";
-import { createProgress } from "@/lib/services/progress-service";
-import { getCoursesByIds, getPublishedCoursesByIds, } from "@/lib/services/course-service";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError, ForbiddenError, NotFoundError, } from "@/utils/errors";
+import { CourseModel } from "@/schemas/course";
+import { EnrollmentModel } from "@/schemas/enrollment";
+import { OrderModel } from "@/schemas/order";
+import { UserModel } from "@/schemas/user";
+import { createOrActivateEnrollment } from "@/controllers/enrollment-service";
+import { createProgress } from "@/controllers/progress-service";
+import { getCoursesByIds, getPublishedCoursesByIds, } from "@/controllers/course-service";
 const SUPPORTED_PAYMENT_METHODS = "CARD, MOMO, BANK_TRANSFER";
 function parseOrderStatus(status) {
     const normalized = status.trim().toUpperCase();

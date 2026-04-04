@@ -1,8 +1,8 @@
-import { requireAdmin } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parsePageParam, parseSizeParam } from "@/lib/request";
-import { getAllOrders } from "@/lib/services/order-service";
+import { requireAdmin } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parsePageParam, parseSizeParam } from "@/utils/request";
+import { getAllOrders } from "@/controllers/order-service";
 export async function OPTIONS(request) {
     return corsPreflight(request);
 }

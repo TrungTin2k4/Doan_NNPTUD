@@ -1,10 +1,10 @@
-import { requireAdmin } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { BadRequestError } from "@/lib/errors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parseJsonBody, validateBody } from "@/lib/request";
-import { updateOrderStatusSchema } from "@/lib/schemas";
-import { updateOrderStatus } from "@/lib/services/order-service";
+import { requireAdmin } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { BadRequestError } from "@/utils/errors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parseJsonBody, validateBody } from "@/utils/request";
+import { updateOrderStatusSchema } from "@/utils/schemas";
+import { updateOrderStatus } from "@/controllers/order-service";
 export async function OPTIONS(request) {
     return corsPreflight(request);
 }

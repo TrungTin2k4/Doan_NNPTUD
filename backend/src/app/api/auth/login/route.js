@@ -1,9 +1,9 @@
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parseJsonBody, validateBody } from "@/lib/request";
-import { enforceAuthRateLimit } from "@/lib/rate-limit";
-import { loginSchema } from "@/lib/schemas";
-import { loginUser } from "@/lib/services/auth-service";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parseJsonBody, validateBody } from "@/utils/request";
+import { enforceAuthRateLimit } from "@/utils/rate-limit";
+import { loginSchema } from "@/utils/schemas";
+import { loginUser } from "@/controllers/auth-service";
 export async function OPTIONS(request) {
     return corsPreflight(request);
 }

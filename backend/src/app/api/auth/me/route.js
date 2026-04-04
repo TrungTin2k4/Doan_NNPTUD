@@ -1,9 +1,9 @@
-import { requireAuth } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parseJsonBody, validateBody } from "@/lib/request";
-import { updateProfileSchema } from "@/lib/schemas";
-import { getCurrentUserProfile, updateCurrentUserProfile } from "@/lib/services/auth-service";
+import { requireAuth } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parseJsonBody, validateBody } from "@/utils/request";
+import { updateProfileSchema } from "@/utils/schemas";
+import { getCurrentUserProfile, updateCurrentUserProfile } from "@/controllers/auth-service";
 export async function OPTIONS(request) {
     return corsPreflight(request);
 }

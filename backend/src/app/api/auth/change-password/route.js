@@ -1,10 +1,10 @@
-import { requireAuth } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parseJsonBody, validateBody } from "@/lib/request";
-import { enforceAuthRateLimit } from "@/lib/rate-limit";
-import { changePasswordSchema } from "@/lib/schemas";
-import { changePassword } from "@/lib/services/auth-service";
+import { requireAuth } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parseJsonBody, validateBody } from "@/utils/request";
+import { enforceAuthRateLimit } from "@/utils/rate-limit";
+import { changePasswordSchema } from "@/utils/schemas";
+import { changePassword } from "@/controllers/auth-service";
 export async function OPTIONS(request) {
     return corsPreflight(request);
 }

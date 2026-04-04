@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { openApiDocument } from "@/lib/openapi";
+import { openApiDocument } from "@/utils/openapi";
 
 export async function GET(request) {
   const serverUrl = request.nextUrl.origin;

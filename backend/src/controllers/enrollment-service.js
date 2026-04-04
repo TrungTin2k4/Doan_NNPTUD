@@ -1,7 +1,7 @@
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError, NotFoundError } from "@/lib/errors";
-import { EnrollmentModel } from "@/lib/models/enrollment";
-import { normalizeText } from "@/lib/utils";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError, NotFoundError } from "@/utils/errors";
+import { EnrollmentModel } from "@/schemas/enrollment";
+import { normalizeText } from "@/utils";
 
 function parseEnrollmentSource(source) {
     const normalized = normalizeText(source);

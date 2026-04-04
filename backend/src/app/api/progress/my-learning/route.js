@@ -1,7 +1,7 @@
-import { requireAuth } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { getMyLearningCourses } from "@/lib/services/progress-service";
+import { requireAuth } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { getMyLearningCourses } from "@/controllers/progress-service";
 export async function OPTIONS(request) {
     return corsPreflight(request);
 }

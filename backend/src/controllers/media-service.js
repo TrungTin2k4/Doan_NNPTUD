@@ -1,10 +1,10 @@
 import { randomUUID } from "crypto";
 import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError, ForbiddenError, NotFoundError } from "@/lib/errors";
-import { MediaAssetModel } from "@/lib/models/media-asset";
-import { normalizeText } from "@/lib/utils";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError, ForbiddenError, NotFoundError } from "@/utils/errors";
+import { MediaAssetModel } from "@/schemas/media-asset";
+import { normalizeText } from "@/utils";
 
 const DEFAULT_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
 const SUPPORTED_PURPOSES = new Set(["GENERAL", "AVATAR", "COURSE_THUMBNAIL"]);
@@ -100,7 +100,7 @@ function resolveFileStoragePaths(purpose, extension) {
     return {
         relativePath,
         absolutePath,
-        publicUrl: `/${relativePath}`,
+        publicUrl: `/api/${relativePath}`,
     };
 }
 

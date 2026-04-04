@@ -1,8 +1,8 @@
 import { createHash } from "crypto";
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError, NotFoundError } from "@/lib/errors";
-import { UserSessionModel } from "@/lib/models/user-session";
-import { normalizeText } from "@/lib/utils";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError, NotFoundError } from "@/utils/errors";
+import { UserSessionModel } from "@/schemas/user-session";
+import { normalizeText } from "@/utils";
 
 function resolveJwtExpirationMs() {
     const raw = process.env.JWT_EXPIRATION ?? "86400000";

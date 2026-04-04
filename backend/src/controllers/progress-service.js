@@ -1,9 +1,9 @@
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError, NotFoundError } from "@/lib/errors";
-import { CourseModel } from "@/lib/models/course";
-import { ProgressModel } from "@/lib/models/progress";
-import { countLessons, getCourseById } from "@/lib/services/course-service";
-import { hasActiveEnrollment } from "@/lib/services/enrollment-service";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError, NotFoundError } from "@/utils/errors";
+import { CourseModel } from "@/schemas/course";
+import { ProgressModel } from "@/schemas/progress";
+import { countLessons, getCourseById } from "@/controllers/course-service";
+import { hasActiveEnrollment } from "@/controllers/enrollment-service";
 function getCourseLessonIdSet(course) {
     const sections = Array.isArray(course.sections) ? course.sections : [];
     const lessonIds = new Set();

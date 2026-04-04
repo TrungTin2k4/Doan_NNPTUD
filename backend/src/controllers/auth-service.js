@@ -1,12 +1,12 @@
 import { createHash, randomBytes } from "crypto";
 import bcrypt from "bcryptjs";
-import { generateJwtToken } from "@/lib/auth";
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError, ForbiddenError, InvalidCredentialsError, NotFoundError, } from "@/lib/errors";
-import { PasswordResetTokenModel } from "@/lib/models/password-reset-token";
-import { UserModel } from "@/lib/models/user";
-import { isPasswordValid, PASSWORD_POLICY_MESSAGE } from "@/lib/password-policy";
-import { createUserSession, revokeAllUserSessions } from "@/lib/services/user-session-service";
+import { generateJwtToken } from "@/utils/auth";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError, ForbiddenError, InvalidCredentialsError, NotFoundError, } from "@/utils/errors";
+import { PasswordResetTokenModel } from "@/schemas/password-reset-token";
+import { UserModel } from "@/schemas/user";
+import { isPasswordValid, PASSWORD_POLICY_MESSAGE } from "@/utils/password-policy";
+import { createUserSession, revokeAllUserSessions } from "@/controllers/user-session-service";
 function normalizeEmail(email) {
     return email.trim().toLowerCase();
 }

@@ -1,6 +1,6 @@
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { getPublishedCategories } from "@/lib/services/course-service";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { getPublishedCategories } from "@/controllers/course-service";
 export async function OPTIONS(request) {
     return corsPreflight(request);
 }

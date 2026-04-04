@@ -1,8 +1,8 @@
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError, NotFoundError } from "@/lib/errors";
-import { CategoryModel } from "@/lib/models/category";
-import { sanitizePlainText } from "@/lib/sanitizer";
-import { escapeRegex, generateSlugFromTitle, normalizeText } from "@/lib/utils";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError, NotFoundError } from "@/utils/errors";
+import { CategoryModel } from "@/schemas/category";
+import { sanitizePlainText } from "@/utils/sanitizer";
+import { escapeRegex, generateSlugFromTitle, normalizeText } from "@/utils";
 
 function parseRequiredName(name) {
     const normalized = sanitizePlainText(name);

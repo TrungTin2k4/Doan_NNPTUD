@@ -1,9 +1,9 @@
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError, ForbiddenError, NotFoundError } from "@/lib/errors";
-import { CourseModel } from "@/lib/models/course";
-import { ReviewModel } from "@/lib/models/review";
-import { sanitizePlainText } from "@/lib/sanitizer";
-import { hasAccess } from "@/lib/services/progress-service";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError, ForbiddenError, NotFoundError } from "@/utils/errors";
+import { CourseModel } from "@/schemas/course";
+import { ReviewModel } from "@/schemas/review";
+import { sanitizePlainText } from "@/utils/sanitizer";
+import { hasAccess } from "@/controllers/progress-service";
 
 function parseRating(rating) {
     if (!Number.isInteger(rating) || rating < 1 || rating > 5) {

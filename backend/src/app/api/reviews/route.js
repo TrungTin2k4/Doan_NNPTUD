@@ -1,9 +1,9 @@
-import { requireAuth } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parseJsonBody, validateBody } from "@/lib/request";
-import { reviewSchema } from "@/lib/schemas";
-import { upsertMyReview } from "@/lib/services/review-service";
+import { requireAuth } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parseJsonBody, validateBody } from "@/utils/request";
+import { reviewSchema } from "@/utils/schemas";
+import { upsertMyReview } from "@/controllers/review-service";
 
 export async function OPTIONS(request) {
     return corsPreflight(request);

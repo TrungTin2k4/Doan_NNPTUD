@@ -1,4 +1,4 @@
-import { BadRequestError } from "@/lib/errors";
+import { BadRequestError } from "@/utils/errors";
 const URL_PROTOCOLS = new Set(["http:", "https:"]);
 function isRootRelativePath(value) {
     if (!value.startsWith("/")) {

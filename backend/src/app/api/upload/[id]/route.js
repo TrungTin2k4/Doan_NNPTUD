@@ -1,7 +1,7 @@
-import { requireAuth } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { deleteMediaAssetById } from "@/lib/services/media-service";
+import { requireAuth } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { deleteMediaAssetById } from "@/controllers/media-service";
 
 export const runtime = "nodejs";
 

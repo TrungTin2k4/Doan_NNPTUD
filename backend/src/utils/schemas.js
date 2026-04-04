@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PASSWORD_POLICY_MESSAGE, PASSWORD_POLICY_REGEX } from "@/lib/password-policy";
+import { PASSWORD_POLICY_MESSAGE, PASSWORD_POLICY_REGEX } from "@/utils/password-policy";
 export const registerSchema = z.object({
     fullName: z.string().trim().min(1, "Full name is required"),
     email: z.string().trim().min(1, "Email is required").email("Invalid email format"),

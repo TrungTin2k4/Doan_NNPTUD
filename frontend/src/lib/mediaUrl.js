@@ -10,7 +10,11 @@ export function resolveMediaUrl(value) {
   }
 
   if (value.startsWith('/')) {
-    return `${API_BASE_URL}${value}`
+    // Rewrite old /uploads/ paths to /api/uploads/ for backward compatibility
+    const normalized = value.startsWith('/uploads/') && !value.startsWith('/api/')
+      ? `/api${value}`
+      : value
+    return `${API_BASE_URL}${normalized}`
   }
 
   return value

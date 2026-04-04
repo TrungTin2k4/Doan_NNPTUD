@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { buildCorsHeaders } from "@/lib/cors";
-import { AppError, ValidationError } from "@/lib/errors";
+import { buildCorsHeaders } from "@/utils/cors";
+import { AppError, ValidationError } from "@/utils/errors";
 function mapZodError(error) {
     const fieldErrors = {};
     for (const issue of error.issues) {

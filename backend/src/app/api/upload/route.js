@@ -1,9 +1,9 @@
-import { requireAuth } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { BadRequestError } from "@/lib/errors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parsePageParam, parseSizeParam } from "@/lib/request";
-import { getMyMediaAssets, uploadMediaAsset } from "@/lib/services/media-service";
+import { requireAuth } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { BadRequestError } from "@/utils/errors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parsePageParam, parseSizeParam } from "@/utils/request";
+import { getMyMediaAssets, uploadMediaAsset } from "@/controllers/media-service";
 
 export const runtime = "nodejs";
 

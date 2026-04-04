@@ -1,4 +1,4 @@
-import { BadRequestError, ValidationError } from "@/lib/errors";
+import { BadRequestError, ValidationError } from "@/utils/errors";
 export async function parseJsonBody(request) {
     try {
         return await request.json();

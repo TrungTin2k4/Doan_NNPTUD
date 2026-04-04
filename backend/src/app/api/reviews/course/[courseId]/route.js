@@ -1,7 +1,7 @@
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parsePageParam, parseSizeParam } from "@/lib/request";
-import { getCoursePublishedReviews } from "@/lib/services/review-service";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parsePageParam, parseSizeParam } from "@/utils/request";
+import { getCoursePublishedReviews } from "@/controllers/review-service";
 
 export async function OPTIONS(request) {
     return corsPreflight(request);

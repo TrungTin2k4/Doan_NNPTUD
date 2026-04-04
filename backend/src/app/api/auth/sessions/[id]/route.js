@@ -1,7 +1,7 @@
-import { requireAuth } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { revokeMySessionById } from "@/lib/services/user-session-service";
+import { requireAuth } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { revokeMySessionById } from "@/controllers/user-session-service";
 
 export async function OPTIONS(request) {
     return corsPreflight(request);

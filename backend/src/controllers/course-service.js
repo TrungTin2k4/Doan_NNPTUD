@@ -1,8 +1,8 @@
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError, NotFoundError } from "@/lib/errors";
-import { CourseModel } from "@/lib/models/course";
-import { sanitizeHttpUrl, sanitizePlainText } from "@/lib/sanitizer";
-import { escapeRegex, generateEntityId, generateSlugFromTitle, normalizeText } from "@/lib/utils";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError, NotFoundError } from "@/utils/errors";
+import { CourseModel } from "@/schemas/course";
+import { sanitizeHttpUrl, sanitizePlainText } from "@/utils/sanitizer";
+import { escapeRegex, generateEntityId, generateSlugFromTitle, normalizeText } from "@/utils";
 const DEFAULT_SORT = { createdAt: -1 };
 function toCourseSummary(course) {
     return {

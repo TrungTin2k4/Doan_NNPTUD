@@ -1,8 +1,8 @@
-import { connectToDatabase } from "@/lib/db";
-import { BadRequestError } from "@/lib/errors";
-import { CartModel } from "@/lib/models/cart";
-import { CourseModel } from "@/lib/models/course";
-import { normalizeText } from "@/lib/utils";
+import { connectToDatabase } from "@/utils/db";
+import { BadRequestError } from "@/utils/errors";
+import { CartModel } from "@/schemas/cart";
+import { CourseModel } from "@/schemas/course";
+import { normalizeText } from "@/utils";
 
 function calculateTotalAmount(items) {
     return items.reduce((sum, item) => sum + Number(item.price ?? 0), 0);

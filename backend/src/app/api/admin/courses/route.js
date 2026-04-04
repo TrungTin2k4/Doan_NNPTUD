@@ -1,9 +1,9 @@
-import { requireAdmin } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parseJsonBody, parsePageParam, parseSizeParam, validateBody } from "@/lib/request";
-import { courseSchema } from "@/lib/schemas";
-import { createCourse, getAllCoursesForAdmin, } from "@/lib/services/course-service";
+import { requireAdmin } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parseJsonBody, parsePageParam, parseSizeParam, validateBody } from "@/utils/request";
+import { courseSchema } from "@/utils/schemas";
+import { createCourse, getAllCoursesForAdmin, } from "@/controllers/course-service";
 export async function OPTIONS(request) {
     return corsPreflight(request);
 }

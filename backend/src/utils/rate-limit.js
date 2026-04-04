@@ -1,5 +1,5 @@
 import { LRUCache } from "lru-cache";
-import { TooManyRequestsError } from "@/lib/errors";
+import { TooManyRequestsError } from "@/utils/errors";
 const buckets = new LRUCache({
     max: 50000,
     ttl: 60 * 60 * 1000,

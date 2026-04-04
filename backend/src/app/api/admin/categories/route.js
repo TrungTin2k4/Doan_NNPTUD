@@ -1,9 +1,9 @@
-import { requireAdmin } from "@/lib/auth";
-import { corsPreflight } from "@/lib/cors";
-import { ok, withErrorHandling } from "@/lib/http";
-import { parseJsonBody, parsePageParam, parseSizeParam, validateBody } from "@/lib/request";
-import { categorySchema } from "@/lib/schemas";
-import { createCategory, getAdminCategories } from "@/lib/services/category-service";
+import { requireAdmin } from "@/utils/auth";
+import { corsPreflight } from "@/utils/cors";
+import { ok, withErrorHandling } from "@/utils/http";
+import { parseJsonBody, parsePageParam, parseSizeParam, validateBody } from "@/utils/request";
+import { categorySchema } from "@/utils/schemas";
+import { createCategory, getAdminCategories } from "@/controllers/category-service";
 
 export async function OPTIONS(request) {
     return corsPreflight(request);
